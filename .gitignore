@@ -1,0 +1,8 @@
+# Compiled class file
+*.class
+
+# Logs
+*.log
+
+# SonarQube and OWASP Reports
+reports/
