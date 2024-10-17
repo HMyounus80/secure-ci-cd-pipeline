@@ -1,0 +1,43 @@
+version: "3"
+
+services:
+  jenkins:
+    image: jenkins/jenkins:lts
+    container_name: jenkins
+    ports:
+      - "8080:8080"
+      - "50000:50000"
+    volumes:
+      - jenkins_home:/var/jenkins_home
+
+  sonarqube:
+    image: sonarqube:latest
+    container_name: sonarqube
+    ports:
+      - "9000:9000"
+    environment:
+      - sonar.jdbc.username=sonar
+      - sonar.jdbc.password=sonar
+      - sonar.jdbc.url=jdbc:postgresql://db:5432/sonar
+    depends_on:
+      - db
+
+  db:
+    image: postgres:latest
+    container_name: sonar-db
+    environment:
+      - POSTGRES_USER=sonar
+      - POSTGRES_PASSWORD=sonar
+      - POSTGRES_DB=sonar
+    ports:
+      - "5432:5432"
+
+  owasp:
+    image: owasp/dependency-check
+    container_name: owasp
+    command: "--scan /src --format ALL"
+    volumes:
+      - ./src:/src
+
+volumes:
+  jenkins_home:
